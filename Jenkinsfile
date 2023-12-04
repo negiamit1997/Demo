@@ -11,16 +11,20 @@ pipeline {
         stage('Build Image') {
             steps {
                 //sh
-                bat "docker build -t 8049376624/selenium-docker -f ./Dockerfile.txt ."
+                bat "docker build -t negiamit117/selenium-docker -f ./Dockerfile.txt ."
             }
         }
-        stage('Push Image') {
-            steps {
-			    withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'coldplay@60', usernameVariable: 'negiamit117')]) {
-                    //sh
-			        bat "docker login --username=${user} --password=${pass}"
-			        bat "docker push negiamit117/selenium-docker:latest"
-			    }                           
+        
+
+        stage('Push Image'){
+            environment{
+                // assuming you have stored the credentials with this name
+                DOCKER_HUB = credentials('dockerhub')
+            }
+            steps{
+                // There might be a warning.
+                sh 'docker login -u ${DOCKER_HUB_USR} -p ${DOCKER_HUB_PSW}'
+                sh 'docker push negiamit117/selenium-docker'
             }
         }
     }
